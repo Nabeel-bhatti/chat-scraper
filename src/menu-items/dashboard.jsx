@@ -1,5 +1,11 @@
+// import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 // assets
-import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
+import { DashboardOutlined } from '@ant-design/icons';
+
+// icons
+const icons = {
+  DashboardOutlined
+};
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
@@ -13,7 +19,7 @@ const dashboard = {
       title: 'Dashboard',
       type: 'item',
       url: '/dashboard/default',
-      icon: <GridViewOutlinedIcon/>,
+      icon: icons.DashboardOutlined,
       breadcrumbs: false
     }
   ]
