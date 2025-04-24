@@ -8,7 +8,7 @@ export default function Footer() {
     <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', p: '24px 16px 0px', mt: 'auto' }}>
       <Typography variant="caption">
         &copy; All rights reserved{' '}
-        <Link href="https://codedthemes.com/" target="_blank" underline="hover">
+        <Link href="https://gigaheap.com/" target="_blank" underline="hover">
           Gigaheap
         </Link>
       </Typography>
