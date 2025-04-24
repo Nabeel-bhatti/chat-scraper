@@ -34,10 +34,15 @@
     "@mui/material": "^6.4.11",
     "@mui/system": "6.4.1",
     "@mui/x-charts": "7.24.1",
+    "@radix-ui/themes": "^3.2.1",
+    "@tailwindcss/postcss": "^4.1.4",
+    "@tailwindcss/vite": "^4.1.4",
     "@vitejs/plugin-react": "4.3.4",
+    "class-variance-authority": "^0.7.1",
     "formik": "2.4.6",
     "framer-motion": "^12.7.4",
     "lodash-es": "4.17.21",
+    "lucide-react": "^0.503.0",
     "motion-dom": "^12.7.4",
     "react": "18.3.1",
     "react-device-detect": "2.2.3",
@@ -75,6 +80,7 @@
     "@eslint/eslintrc": "3.2.0",
     "@eslint/js": "9.19.0",
     "@types/node": "22.13.5",
+    "autoprefixer": "^10.4.21",
     "eslint": "9.19.0",
     "eslint-config-prettier": "10.0.1",
     "eslint-plugin-jsx-a11y": "6.10.2",
@@ -83,8 +89,11 @@
     "eslint-plugin-react-hooks": "5.1.0",
     "immutable": "4.3.7",
     "knip": "5.45.0",
+    "postcss": "^8.5.3",
     "prettier": "3.4.2",
-    "prettier-eslint-cli": "8.0.1"
+    "prettier-eslint-cli": "8.0.1",
+    "tailwindcss": "^4.1.4",
+    "tailwindcss-cli": "^0.1.2"
   },
   "packageManager": "yarn@4.6.0"
 }

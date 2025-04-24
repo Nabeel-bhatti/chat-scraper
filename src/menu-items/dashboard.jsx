@@ -1,12 +1,12 @@
 // import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 // assets
-import { DashboardOutlined } from '@ant-design/icons';
-
-// icons
+import { DashboardOutlined} from '@ant-design/icons'
+import GridViewIcon from '@mui/icons-material/GridView';
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 const icons = {
-  DashboardOutlined
-};
-
+  GridViewIcon,
+  ChatBubbleOutlineOutlinedIcon
+}
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const dashboard = {
@@ -19,7 +19,15 @@ const dashboard = {
       title: 'Dashboard',
       type: 'item',
       url: '/dashboard/default',
-      icon: icons.DashboardOutlined,
+      icon: icons.GridViewIcon,
+      breadcrumbs: false
+    },
+    {
+      id: 'messages',
+      title: 'Messages',
+      type: 'item',
+      url: '/messages',
+      icon: icons.ChatBubbleOutlineOutlinedIcon,
       breadcrumbs: false
     }
   ]

@@ -15,7 +15,7 @@ import logoIcon from '../../assets/images/users/teamflow-logo.png';
 export default function LogoMain() {
   const theme = useTheme();
   return (
-    <img src={logoIcon} alt="TeamFlow" width="160" />
+    <img src={logoIcon} alt="TeamFlow" width="160" style={{paddingTop: '15px'}}/>
     /**
      * if you want to use image instead of svg uncomment following, and comment out <svg> element.
      *
