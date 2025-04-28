@@ -12,6 +12,7 @@ const Color = Loadable(lazy(() => import('pages/component-overview/color')));
 const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
 const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const Messages = Loadable(lazy(() => import('pages/component-overview/messages')));
+const Team = Loadable(lazy(() => import('pages/component-overview/team')));
 
 // render - sample page
 
@@ -37,6 +38,10 @@ const MainRoutes = {
     {
       path: 'messages',
       element: <Messages />
+    },
+    {
+      path: 'team',
+      element: <Team />
     },
     {
       path: 'typography',
