@@ -33,23 +33,23 @@ const team = () => {
         pageSize: 5,
     });
 
-  useEffect(() => {
-    setRows(
-      mockTeamData.map((data) => ({
-        id: data.id,
-        member: data.name,
-        role: data.role,
-        email: data.email,
-        initials: data.initials
-      }))
-    );
-  }, []);
-  const Lable = styled(FormLabel)({
-    marginBottom: '3px',
-    color: '#09090b',
-    fontSize: '14px',
-    fontWeight: 500
-  });
+    useEffect(() => {
+        setRows(
+            mockTeamData.map((data) => ({
+                id: data.id,
+                member: data.name,
+                role: data.role,
+                email: data.email,
+                initials: data.initials
+            }))
+        );
+    }, []);
+    const Lable = styled(FormLabel)({
+        marginBottom: '3px',
+        color: '#09090b',
+        fontSize: '14px',
+        fontWeight: 500
+    });
 
     const handleDialogClose = () => {
         setDialogOpen(false);
@@ -59,59 +59,59 @@ const team = () => {
     };
 
 
-  const columns = [
-    // { field: "id", headerName: "Sr#", flex: 0.5, filterable: false },
-    {
-      field: 'member',
-      headerName: 'Member',
-      flex: 2,
-      renderCell: (params) => {
-        const name = params.value;
-        const getInitials = (name) => {
-          const words = name.trim().split(' ');
-          if (words.length === 1) return words[0][0].toUpperCase();
-          return (words[0][0] + words[1][0]).toUpperCase();
-        };
+    const columns = [
+        // { field: "id", headerName: "Sr#", flex: 0.5, filterable: false },
+        {
+            field: 'member',
+            headerName: 'Member',
+            flex: 2,
+            renderCell: (params) => {
+                const name = params.value;
+                const getInitials = (name) => {
+                    const words = name.trim().split(' ');
+                    if (words.length === 1) return words[0][0].toUpperCase();
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                };
 
-        return (
-          <ListItemAvatar>
-            <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <Avatar
-                sx={{
-                  bgcolor: '#f4f4f5',
-                  color: 'black',
-                  width: 31,
-                  height: 31,
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  mr: 1
-                }}
-              >
-                {getInitials(name)}
-              </Avatar>
-              {name}
-            </Box>
-          </ListItemAvatar>
-        );
-      }
-    },
+                return (
+                    <ListItemAvatar>
+                        <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <Avatar
+                                sx={{
+                                    bgcolor: '#f4f4f5',
+                                    color: 'black',
+                                    width: 31,
+                                    height: 31,
+                                    fontSize: '14px',
+                                    fontWeight: '400',
+                                    mr: 1
+                                }}
+                            >
+                                {getInitials(name)}
+                            </Avatar>
+                            {name}
+                        </Box>
+                    </ListItemAvatar>
+                );
+            }
+        },
 
-    {
-      field: 'role',
-      headerName: 'Role',
-      flex: 1,
-      renderCell: (params) => {
-        const role = params.value;
-        const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
-        return formattedRole;
-      }
-    },
+        {
+            field: 'role',
+            headerName: 'Role',
+            flex: 1,
+            renderCell: (params) => {
+                const role = params.value;
+                const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+                return formattedRole;
+            }
+        },
 
-    {
-      field: 'email',
-      headerName: 'Email',
-      flex: 2
-    },
+        {
+            field: 'email',
+            headerName: 'Email',
+            flex: 2
+        },
 
         {
             field: "actions",
@@ -253,37 +253,37 @@ const team = () => {
                             />
                         </FormControl>
 
-          <FormControl sx={{ width: '100%' }}>
-            <Lable>Role *</Lable>
-            <Stack>
-              <Autocomplete
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '.4rem'
-                  }
-                }}
-                options={['developer', 'designer']}
-                renderInput={(params) => <TextField placeholder="Select a role" {...params} size="small" variant="outlined" />}
-              />
-            </Stack>
-          </FormControl>
-          <FormControl sx={{ width: '100%' }}>
-            <Lable>Image URL (Optional)</Lable>
-            <TextField
-              size="small"
-              type="url"
-              sx={{
-                mb: 3,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '.4rem'
-                }
-              }}
-              variant="outlined"
-              placeholder="https://example.com/image.png"
-            />
-          </FormControl>
-        </DialogContent>
+                        <FormControl sx={{ width: '100%' }}>
+                            <Lable>Role *</Lable>
+                            <Stack>
+                                <Autocomplete
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '.4rem'
+                                        }
+                                    }}
+                                    options={['developer', 'designer']}
+                                    renderInput={(params) => <TextField placeholder="Select a role" {...params} size="small" variant="outlined" />}
+                                />
+                            </Stack>
+                        </FormControl>
+                        <FormControl sx={{ width: '100%' }}>
+                            <Lable>Image URL (Optional)</Lable>
+                            <TextField
+                                size="small"
+                                type="url"
+                                sx={{
+                                    mb: 3,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '.4rem'
+                                    }
+                                }}
+                                variant="outlined"
+                                placeholder="https://example.com/image.png"
+                            />
+                        </FormControl>
+                    </DialogContent>
 
                     <DialogActions sx={{ pb: "24px", pr: "22px" }}>
                         <Button onClick={() => setDialogOpen(false)} color="primary" sx={{ backgroundColor: "#fff", color: "#09090b", border: " 1px solid #e4e4e7", fontSize: "14px", fontWeight: 500, borderRadius: "6px", px: "18px", "&:hover": { color: "#2463EB", backgroundColor: "#ecf2fd" } }}>
@@ -346,5 +346,7 @@ const team = () => {
                     </DialogActions>
                 </Dialog>
             </Paper>
-
+        </Box>
+    )
+}
 export default team;
