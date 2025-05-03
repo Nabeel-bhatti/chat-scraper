@@ -64,8 +64,7 @@ export default function DashboardDefault() {
   });
 
   return (
-
-    <Box sx={{ p: { xs: 2, sm: 3, } }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       <Stack size={12} bgcolor={'#2463EB'} color={'#fff'} sx={{ padding: '1.5rem' }} borderRadius={2}>
         <Typography variant="h3" sx={{ fontSize: '24px', fontWeight: '700' }}>
           Welcome back, Umar!

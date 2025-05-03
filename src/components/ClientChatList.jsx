@@ -1,7 +1,3 @@
-// import { Box } from '@mui/material';
-import { bgcolor, Grid } from '@mui/system';
-// import React from 'react';
-
 import React from 'react';
 import {
   Box,
@@ -26,6 +22,7 @@ import {
   Description as DescriptionIcon
 } from '@mui/icons-material';
 import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { fontWeight } from '@mui/system';
 
 // Styled components
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -72,6 +69,7 @@ export const ClientChatList = () => {
       unread: 2,
       status: 'online',
       avatarColor: '#ef4444',
+      platform: 'Upwork',
       selected: true,
       hasArrow: true
     },
@@ -84,6 +82,7 @@ export const ClientChatList = () => {
       unread: 0,
       status: 'online',
       avatarColor: '#d1d5db',
+      platform: 'Fiverr',
       hasDocument: true
     },
     {
@@ -94,7 +93,8 @@ export const ClientChatList = () => {
       time: '1h',
       unread: 4,
       status: 'away',
-      avatarColor: '#f59e0b'
+      avatarColor: '#f59e0b',
+      platform: 'Upwork'
     },
     {
       id: 4,
@@ -104,6 +104,7 @@ export const ClientChatList = () => {
       time: '3h',
       unread: 0,
       status: 'online',
+      platform: 'Fiverr',
       avatarColor: '#d1d5db'
     },
     {
@@ -114,10 +115,37 @@ export const ClientChatList = () => {
       time: 'Yesterday',
       unread: 0,
       status: 'busy',
-      avatarColor: '#10b981'
+      avatarColor: '#10b981',
+      platform: 'Direct'
     }
   ];
-
+  const getPlatformStyles = (platform) => {
+    switch (platform.toLowerCase()) {
+      case 'upwork':
+        return {
+          color: '#15803d', // Upwork green
+          border: '1px solid #bbf7d0',
+          backgroundColor: '#f0fdf4',
+        };
+      case 'fiverr':
+        return {
+          color: '#047857', // Fiverr green
+          border: '1px solid #a7f3d0',
+          backgroundColor: '#ecfdf5',
+        };
+      case 'direct':
+        return {
+          color: '#1d4ed8', // Direct blue
+          border: '1px solid #bfdbfe',
+          backgroundColor: '#eff6ff',
+        };
+      default:
+        return {
+          color: '#09090B',
+          border: '1px solid #D3D3D3',
+        };
+    }
+  };
   const getStatusColor = (status) => {
     switch (status) {
       case 'online':
@@ -206,7 +234,23 @@ export const ClientChatList = () => {
                 </Typography>
               }
               secondary={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '3px' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mr: 1,
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      borderRadius: '20px',
+                      padding: '0px 7px',
+                      height: '1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      ...getPlatformStyles(conversation.platform)
+                    }}
+                  >
+                    {conversation.platform}
+                  </Typography>
                   {conversation.hasDocument && <DescriptionIcon sx={{ fontSize: 16, mr: 0.5, color: '#6b7280' }} />}
                   <Typography
                     variant="body2"
