@@ -22,6 +22,7 @@ import { Formik } from 'formik';
 // project imports
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
+import { GoogleLogin } from '@react-oauth/google';
 
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
@@ -39,6 +40,15 @@ export default function AuthLogin({ isDemo = false }) {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+  const handleGoogleAuth = async (credential) => {
+    try {
+      const response = await googleAuth(credential);
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard/default', { replace: true });
+    } catch (error) {
+      console.error('Google authentication failed:', error);
+    }
   };
 
   return (
@@ -140,7 +150,26 @@ export default function AuthLogin({ isDemo = false }) {
                     Login
                   </Button>
                 </AnimateButton>
+                <Typography style={{ margin: '20px 0', textAlign: 'center', color: 'gray', fontSize: '13px' }}>Or</Typography>
               </Grid>
+            </Grid>
+            <Grid item xs={12} mb={2}>
+              <AnimateButton>
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    handleGoogleAuth(credentialResponse.credential);
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
+                  useOneTap
+                  text="continue_with"
+                  shape="rectangular"
+                  size="large"
+                  width="100%"
+                  mt={5}
+                />
+              </AnimateButton>
             </Grid>
           </form>
         )}
