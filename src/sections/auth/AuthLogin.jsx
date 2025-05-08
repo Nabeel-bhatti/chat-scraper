@@ -52,8 +52,8 @@ export default function AuthLogin() {
       console.log('Login response:', response.data.token);
 
       if (response.status === 200) {
-        localStorage.setItem("Token", response.data.token);
-        alert('Login successful!');
+        localStorage.setItem("token", response.data.token);
+        console.log('Login successful!');
         navigate('/');
       }
     } catch (err) {

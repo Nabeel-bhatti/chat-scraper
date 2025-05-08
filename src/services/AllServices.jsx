@@ -8,6 +8,12 @@ export const registration = (data) => {
         password_confirmation: data.password_confirmation
     });
 };
+export const login = (data) => {
+    return api.post('login/', {
+        email: data.email,
+        password: data.password,
+    });
+};
 
 export const googleAuth = (credential) => {
     return axios.post('/api/auth/google', { credential });
