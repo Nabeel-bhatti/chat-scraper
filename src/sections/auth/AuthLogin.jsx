@@ -13,15 +13,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { GoogleLogin } from '@react-oauth/google';
-
-// assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-
 import { login } from '../../services/AllServices';
 
 export default function AuthLogin() {
@@ -94,7 +90,6 @@ export default function AuthLogin() {
         onSubmit={handleLogin}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, touched, values, }) => {
-          // console.log("errors: ", errors)
           return (
             <form noValidate onSubmit={handleSubmit}>
               <Grid container spacing={3}>
@@ -184,9 +179,10 @@ export default function AuthLogin() {
                       Login
                     </Button>
                   </AnimateButton>
+                  <Typography style={{ marginTop: '20px', textAlign: 'center', color: 'gray', fontSize: '13px' }}>Or</Typography>
                 </Grid>
 
-                <Grid item xs={12} mb={2}>
+                <Grid size={12} mb={2}>
                   <AnimateButton>
                     <GoogleLogin
                       onSuccess={(credentialResponse) => {
@@ -205,15 +201,11 @@ export default function AuthLogin() {
                   </AnimateButton>
                 </Grid>
               </Grid>
-
             </form>
-
           )
         }}
-
       </Formik>
     </>
   );
 }
-
 AuthLogin;

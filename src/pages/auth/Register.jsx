@@ -1,10 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
-// material-ui
-import Grid from '@mui/material/Grid2';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+
 // material-ui
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
@@ -13,9 +9,7 @@ import Typography from '@mui/material/Typography';
 // project imports
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import FirebaseRegister from 'sections/auth/AuthRegister';
-// project imports
-import AuthWrapper from 'sections/auth/AuthWrapper';
-import FirebaseRegister from 'sections/auth/AuthRegister';
+
 
 // ================================|| JWT - REGISTER ||================================ //
 // ================================|| JWT - REGISTER ||================================ //

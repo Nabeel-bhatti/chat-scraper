@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Grid, Stack, InputLabel, OutlinedInput, FormHelperText, Button, Box, Typography, InputAdornment } from '@mui/material';
+import { Stack, InputLabel, OutlinedInput, FormHelperText, Button, Box, Typography, InputAdornment } from '@mui/material';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
+import Grid from '@mui/material/Grid2';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
@@ -99,7 +100,7 @@ export default function AuthRegister() {
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             {/* First Name */}
-            <Grid item xs={12} md={6}>
+            <Grid size={6} xs={12} md={6}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="firstname">First Name*</InputLabel>
                 <OutlinedInput
@@ -116,7 +117,7 @@ export default function AuthRegister() {
               </Stack>
             </Grid>
             {/* Last Name */}
-            <Grid item xs={12} md={6}>
+            <Grid size={6} xs={12} md={6}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="lastname">Last Name*</InputLabel>
                 <OutlinedInput
@@ -133,7 +134,7 @@ export default function AuthRegister() {
               </Stack>
             </Grid>
             {/* Email */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="email">Email Address*</InputLabel>
                 <OutlinedInput
@@ -151,7 +152,7 @@ export default function AuthRegister() {
               </Stack>
             </Grid>
             {/* Password */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="password">Password*</InputLabel>
                 <OutlinedInput
@@ -184,7 +185,7 @@ export default function AuthRegister() {
               </Box>
             </Grid>
             {/* Confirm Password */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="password_confirmation">Confirm Password*</InputLabel>
                 <OutlinedInput
@@ -209,7 +210,7 @@ export default function AuthRegister() {
               </Grid>
             )}
             {/* Create Account */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <AnimateButton>
                 <Button fullWidth size="large" type="submit" variant="contained" disabled={isSubmitting}>
                   Create Account
@@ -217,7 +218,7 @@ export default function AuthRegister() {
               </AnimateButton>
               <Typography style={{ marginTop: '24px', textAlign: 'center', color: 'gray', fontSize: '13px' }}>Or</Typography>
             </Grid>
-            <Grid item xs={12} mb={2}>
+            <Grid size={12} mb={2}>
               <AnimateButton>
                 <GoogleLogin
                   onSuccess={(credentialResponse) => {

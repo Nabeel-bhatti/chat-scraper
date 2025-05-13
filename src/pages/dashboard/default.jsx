@@ -107,7 +107,7 @@ export default function DashboardDefault() {
         </Stack>
       </Stack>
       <MainG container spacing={2}>
-        <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <C variant="outlined">
             <Box>
               <Typography variant="h5" sx={{ pb: 1, fontSize: '14px' }}>
@@ -128,7 +128,7 @@ export default function DashboardDefault() {
             </Box>
           </C>
         </Grid>
-        <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <C variant="outlined">
             <Box>
               <Typography variant="h5" sx={{ pb: 1, fontSize: '14px' }}>
@@ -147,7 +147,7 @@ export default function DashboardDefault() {
             </Box>
           </C>
         </Grid>
-        <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <C2 variant="outlined" sx={{ pb: '24px' }}>
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -169,7 +169,7 @@ export default function DashboardDefault() {
             </Box>
           </C2>
         </Grid>
-        <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
           <C variant="outlined">
             <Box>
               <Typography variant="h5" sx={{ pb: 1, fontSize: '14px' }}>
@@ -191,7 +191,7 @@ export default function DashboardDefault() {
       </MainG>
 
       <MainG container spacing={2}>
-        <Grid item size={{ xs: 12, md: 6, lg: 6 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 6 }}>
           <C2 variant="outlined" sx={{ height: '100%' }}>
             <Box>
               <Box sx={{ mb: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -278,7 +278,7 @@ export default function DashboardDefault() {
             </Button>
           </C2>
         </Grid>
-        <Grid item size={{ xs: 12, md: 6, lg: 6 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 6 }}>
           <C2 variant="outlined">
             <Box>
               <Box sx={{ mb: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -376,17 +376,17 @@ export default function DashboardDefault() {
       </MainG>
       <C2 sx={{ mt: '20px' }} variant="outlined">
         <Grid container>
-          <Grid item size={12}>
+          <Grid size={12}>
             <Typography sx={{ fontSize: '24px', fontWeight: 600 }}>Platform Activity</Typography>
           </Grid>
         </Grid>
         <Grid container sx={{ mt: '24px' }} spacing={2}>
-          <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <Grid container>
-              <Grid item size={1}>
+              <Grid size={1}>
                 <Box sx={{ bgcolor: '#28af60', height: '40px', width: '8px', borderRadius: '4px' }}></Box>
               </Grid>
-              <Grid item size={11}>
+              <Grid size={11}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', gap: '16px' }}>
@@ -408,12 +408,12 @@ export default function DashboardDefault() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <Grid container>
-              <Grid item size={1}>
+              <Grid size={1}>
                 <Box sx={{ bgcolor: '#1aa87d', height: '40px', width: '8px', borderRadius: '4px' }}></Box>
               </Grid>
-              <Grid item size={11}>
+              <Grid size={11}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', gap: '16px' }}>
@@ -435,12 +435,12 @@ export default function DashboardDefault() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <Grid container>
-              <Grid item size={1}>
+              <Grid size={1}>
                 <Box sx={{ bgcolor: '#0b7dda', height: '40px', width: '8px', borderRadius: '4px' }}></Box>
               </Grid>
-              <Grid item size={11}>
+              <Grid size={11}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', gap: '16px' }}>
@@ -462,12 +462,12 @@ export default function DashboardDefault() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item size={{ xs: 12, md: 6, lg: 3 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <Grid container>
-              <Grid item size={1}>
+              <Grid size={1}>
                 <Box sx={{ bgcolor: '#e86417', height: '40px', width: '8px', borderRadius: '4px' }}></Box>
               </Grid>
-              <Grid item size={11}>
+              <Grid size={11}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', gap: '16px' }}>
