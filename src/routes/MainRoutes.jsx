@@ -10,7 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')))
 
 // render - color
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
-const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
+const Pricing = Loadable(lazy(() => import('pages/component-overview/pricing')));
 const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const Messages = Loadable(lazy(() => import('pages/component-overview/messages')));
 const Profile = Loadable(lazy(() => import('pages/component-overview/profile')));
@@ -54,8 +54,8 @@ const MainRoutes = {
       element: <Team />
     },
     {
-      path: 'typography',
-      element: <Typography />
+      path: 'pricing',
+      element: <Pricing />
     },
     {
       path: 'color',

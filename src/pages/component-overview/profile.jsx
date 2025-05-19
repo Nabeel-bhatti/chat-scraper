@@ -2,7 +2,8 @@
 import { Box, Button, Card, InputLabel, OutlinedInput, Paper, Stack, styled, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { dummyUser, integrations } from '../../data/dummy_team_data';
-import { CalendarOutlined, ClockCircleOutlined, KeyOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -305,7 +306,9 @@ export default function profile() {
                                 <Grid container spacing={"16px"} sx={{ mb: "36px" }} >
 
                                     <Grid size={{ xs: 12, md: 6, lg: 6 }} sx={{ display: 'flex', justifyContent: 'space-between', px: "12px" }}>
-                                        <Box sx={{ display: 'flex', gap: ".5rem" }}><KeyOutlined style={{ color: "#4b5563", fontSize: "20px", rotate: "180deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
+                                        {/* <Box sx={{ display: 'flex', gap: ".5rem" }}><KeyOutlined style={{ color: "#4b5563", fontSize: "20px", rotate: "180deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
+                                        </Box> */}
+                                        <Box sx={{display:"flex",alignItems:'center', gap: ".5rem" }}><VpnKeyOutlinedIcon style={{ color: "#4b5563", fontSize: "20px", rotate: "-45deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
                                         </Box>
                                         <Box>
                                             <Button
