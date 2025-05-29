@@ -1,9 +1,11 @@
 import axios from 'axios';
+const token = localStorage.getItem('token');
+const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000/api/';
 export const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',
-  withCredentials: true
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Accept': 'application/json'
-  //   }
-}); 
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'multipart/form-data'
+  }
+});

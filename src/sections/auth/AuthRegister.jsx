@@ -9,9 +9,9 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import { useNavigate } from 'react-router';
-import { registration } from '../../services/AllServices';
+import { googleAuth, registration } from '../../services/AllServices';
 import { GoogleLogin } from '@react-oauth/google';
-
+import Grid from '@mui/material/Grid2';
 export default function AuthRegister() {
   const [level, setLevel] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -205,7 +205,7 @@ export default function AuthRegister() {
             </Grid>
             {/* Submit Error */}
             {errors.submit && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
               </Grid>
             )}
@@ -220,20 +220,22 @@ export default function AuthRegister() {
             </Grid>
             <Grid size={12} mb={2}>
               <AnimateButton>
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    handleGoogleAuth(credentialResponse.credential);
-                  }}
-                  onError={() => {
-                    console.log('Login Failed');
-                  }}
-                  useOneTap
-                  text="continue_with"
-                  shape="rectangular"
-                  size="large"
-                  width="100%"
-                  mt={5}
-                />
+                <Box sx={{ width: '100%' }}>
+                  <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                      handleGoogleAuth(credentialResponse.credential);
+                    }}
+                    onError={(error) => {
+                      console.error('Google One Tap login failed:', error);
+                    }}
+                    useOneTap
+                    text="continue_with"
+                    shape="rectangular"
+                    size="large"
+                    width="400"
+                    // mt={5}
+                  />
+                </Box>
               </AnimateButton>
             </Grid>
           </Grid>

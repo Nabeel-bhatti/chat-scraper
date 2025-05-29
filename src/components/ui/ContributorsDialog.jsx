@@ -24,7 +24,6 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon, Close as CloseIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { mockTeamData as members } from '../mockData';
-import messages from '../../pages/component-overview/messages';
 // Styled components
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -145,67 +144,6 @@ function ContributorsDialog({ open, onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
-
-  // Mock data for team members
-  //   const members = [
-  //     {
-  //       id: 1,
-  //       name: 'Hafiz Muhammad Fakhir',
-  //       email: 'hmfakhir@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 2,
-  //       name: 'Hafiz Umar Barlas',
-  //       email: 'umar@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 3,
-  //       name: 'Gigaheap',
-  //       email: 'admin@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 4,
-  //       name: 'Nadir Hussain',
-  //       email: 'nhussain@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 5,
-  //       name: 'Muhammad Bilal',
-  //       email: 'mbilal@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 6,
-  //       name: 'Aleem Ahmad',
-  //       email: 'aleemahmada107@gmail.com',
-  //       role: 'Member',
-  //       isGuest: true,
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 7,
-  //       name: 'Muhammad Ahsan Masood',
-  //       email: 'mahsan@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     },
-  //     {
-  //       id: 8,
-  //       name: 'Aleem Ahmad',
-  //       email: 'aleem@gigaheap.com',
-  //       role: 'Member',
-  //       avatar: '/placeholder.svg?height=40&width=40'
-  //     }
-  //   ];
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);

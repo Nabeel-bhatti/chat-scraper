@@ -12,7 +12,6 @@ import FirebaseRegister from 'sections/auth/AuthRegister';
 
 
 // ================================|| JWT - REGISTER ||================================ //
-// ================================|| JWT - REGISTER ||================================ //
 
 export default function Register() {
   return (

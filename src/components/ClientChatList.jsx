@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -12,7 +12,8 @@ import {
   ListItemText,
   Badge,
   Paper,
-  styled
+  styled,
+  Skeleton
 } from '@mui/material';
 import {
   FilterAltOutlined as FilterIcon,
@@ -22,8 +23,9 @@ import {
   Description as DescriptionIcon
 } from '@mui/icons-material';
 import { FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { fontWeight } from '@mui/system';
-
+import { api } from '../lib/apiRoute';
+import echo from '../../echo.js';
+const currentUserId = localStorage.getItem('user_id');
 // Styled components
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -58,67 +60,89 @@ const ConversationItem = styled(ListItem)(({ theme, selected }) => ({
 }));
 
 // Main component
-export const ClientChatList = () => {
-  const conversations = [
-    {
-      id: 1,
-      name: 'Sarah Miller',
-      initials: 'SM',
-      message: 'We need to review the desi...',
-      time: '5m',
-      unread: 2,
-      status: 'online',
-      avatarColor: '#ef4444',
-      platform: 'Upwork',
-      selected: true,
-      hasArrow: true
-    },
-    {
-      id: 2,
-      name: 'David Roberts',
-      initials: 'DR',
-      message: 'Can you explain how the new f...',
-      time: '25m',
-      unread: 0,
-      status: 'online',
-      avatarColor: '#d1d5db',
-      platform: 'Fiverr',
-      hasDocument: true
-    },
-    {
-      id: 3,
-      name: 'Jennifer Clark',
-      initials: 'JC',
-      message: "I've just sent over the proje...",
-      time: '1h',
-      unread: 4,
-      status: 'away',
-      avatarColor: '#f59e0b',
-      platform: 'Upwork'
-    },
-    {
-      id: 4,
-      name: 'Michael Johnson',
-      initials: 'MJ',
-      message: 'Let me know when you can hop ...',
-      time: '3h',
-      unread: 0,
-      status: 'online',
-      platform: 'Fiverr',
-      avatarColor: '#d1d5db'
-    },
-    {
-      id: 5,
-      name: 'Amanda Garcia',
-      initials: 'AG',
-      message: "I've reviewed your proposal and ...",
-      time: 'Yesterday',
-      unread: 0,
-      status: 'busy',
-      avatarColor: '#10b981',
-      platform: 'Direct'
+export const ClientChatList = ({ setSelectedChat, selectedChat, lastMessage, setLastMessage }) => {
+  const [chats, setChats] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const channels = [];
+
+    async function fetchAndSubscribe() {
+      try {
+        const response = await api.get('conversations');
+        const data = response.data;
+        setChats(data.data);
+        setIsLoading(false);
+
+        // Subscribe to all conversation channels
+        data.data.forEach((chat) => {
+          const channel = echo.private(`chat.${chat.conversation_id}`);
+          // Inside the MessageSent listener
+          channel.listen('MessageSent', (event) => {
+            setLastMessage({
+              conversation_id: event.conversation_id,
+              last_message: event.message,
+              updated_at: event.last_message_updated_at || new Date().toISOString()
+            });
+
+            if (event.sender_id !== currentUserId) {
+              setChats((prev) =>
+                prev.map((c) => {
+                  if (c.conversation_id === event.conversation_id) {
+                    // Only increment if not the active chat
+                    const unread = selectedChat === event.conversation_id ? 0 : (c.unread || 0) + 1;
+                    return { ...c, unread };
+                  }
+                  return c;
+                })
+              );
+            }
+          });
+
+          // Inside the MessageRead listener
+          channel.listen('MessageRead', (event) => {
+            if (event.user_id === currentUserId) {
+              setChats((prev) =>
+                prev.map((chat) => (chat.conversation_id === event.conversation_id ? { ...chat, unread: event.unread_count } : chat))
+              );
+            }
+          });
+          channels.push(channel);
+        });
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+        console.error('Error:', error);
+      }
     }
-  ];
+
+    fetchAndSubscribe();
+
+    return () => {
+      channels.forEach((channel) => echo.leave(channel));
+    };
+  }, [setLastMessage, selectedChat]);
+
+  // Update last message in chats
+  useEffect(() => {
+    if (lastMessage && lastMessage.conversation_id) {
+      setChats((prev) =>
+        prev.map((conv) =>
+          conv.conversation_id === lastMessage.conversation_id
+            ? {
+                ...conv,
+                last_message: lastMessage.last_message,
+                updated_at: lastMessage.updated_at || conv.updated_at
+              }
+            : conv
+        )
+      );
+    }
+  }, [lastMessage]);
+  const handleChatSelect = (chatId) => {
+    setSelectedChat(chatId);
+  };
+
   const getPlatformStyles = (platform) => {
     switch (platform.toLowerCase()) {
       case 'upwork':
@@ -158,7 +182,25 @@ export const ClientChatList = () => {
         return '#d1d5db';
     }
   };
+  function getInitials(name) {
+    if (!name) return '';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  }
+  function timeAgo(dateString) {
+    const now = new Date();
+    const then = new Date(dateString);
+    const secondsAgo = Math.floor((now - then) / 1000);
 
+    if (secondsAgo < 60) return `${secondsAgo}s`;
+    const minutes = Math.floor(secondsAgo / 60);
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
+  }
   return (
     <Paper
       elevation={0}
@@ -205,95 +247,124 @@ export const ClientChatList = () => {
       </Box>
 
       <List disablePadding>
-        {conversations.map((conversation) => (
-          <ConversationItem key={conversation.id} selected={conversation.selected} divider>
-            <ListItemAvatar>
-              <Box sx={{ position: 'relative' }}>
-                <Avatar
-                  sx={{
-                    bgcolor: '#e5e7eb',
-                    color: 'black',
-                    width: 36,
-                    height: 36,
-                    fontSize: '16px',
-                    fontWeight: '500',
-                    border: conversation.avatarColor !== '#d1d5db' ? '0px solid white' : 'none',
-                    boxShadow: conversation.avatarColor !== '#d1d5db' ? '0 0 0 2px ' + conversation.avatarColor : 'none'
-                  }}
-                >
-                  {conversation.initials}
-                </Avatar>
-                <StatusDot color={getStatusColor(conversation.status)} />
-              </Box>
-            </ListItemAvatar>
-
-            <ListItemText
-              primary={
-                <Typography variant="subtitle1" component="div" sx={{ fontWeight: '600', fontSize: '16px', color: '#09090B', mb: '-2px' }}>
-                  {conversation.name}
-                </Typography>
-              }
-              secondary={
-                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '3px' }}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      mr: 1,
-                      fontSize: '0.75rem',
-                      fontWeight: '600',
-                      borderRadius: '20px',
-                      padding: '0px 7px',
-                      height: '1.25rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      ...getPlatformStyles(conversation.platform)
-                    }}
-                  >
-                    {conversation.platform}
-                  </Typography>
-                  {conversation.hasDocument && <DescriptionIcon sx={{ fontSize: 16, mr: 0.5, color: '#6b7280' }} />}
-                  <Typography
-                    variant="body2"
-                    // color="text.secondary"
-                    color="#4b5563"
-                    fontSize={'.875rem'}
-                    sx={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      maxWidth: '200px'
-                    }}
-                  >
-                    {conversation.message}
-                  </Typography>
+        {/* {isLoading && <Skeleton animation="pulse" variant="rectangular" width="100%" height={60} sx={{ margin: '16px 0' }} />} */}
+        {chats.map((conversation) => {
+          const [conversationUser] = conversation.users;
+          const conversationStatus = conversationUser.status;
+          const conversationName = conversationUser.name;
+          const conversationId = conversation.conversation_id;
+          const isSelected = selectedChat === conversationId;
+          return (
+            <ConversationItem key={conversation.id} selected={isSelected} divider onClick={() => handleChatSelect(conversationId)}>
+              <ListItemAvatar>
+                <Box sx={{ position: 'relative' }}>
+                  {isLoading ? (
+                    <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        bgcolor: '#e5e7eb',
+                        color: 'black',
+                        width: 36,
+                        height: 36,
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        border: conversation.avatarColor !== '#d1d5db' ? '0px solid white' : 'none',
+                        boxShadow: conversation.avatarColor !== '#d1d5db' ? '0 0 0 2px ' + conversation.avatarColor : 'none'
+                      }}
+                    >
+                      {getInitials(conversationName)}
+                    </Avatar>
+                  )}
+                  {isLoading ? (
+                    <Skeleton
+                      animation="wave"
+                      variant="circular"
+                      width={12}
+                      height={12}
+                      sx={{ position: 'absolute', bottom: -7, right: 14 }}
+                    />
+                  ) : (
+                    <StatusDot color={getStatusColor(conversationStatus)} />
+                  )}
                 </Box>
-              }
-            />
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'left',
-                mr: 1,
-                minWidth: 45,
-                fontSize: '12px',
-                marginBottom: '16px'
-              }}
-            >
-              <Typography variant="caption" color="text.secondary">
-                {conversation.time}
-              </Typography>
+              </ListItemAvatar>
 
-              {conversation.unread > 0 ? (
-                <StyledBadge badgeContent={conversation.unread} />
-              ) : conversation.hasArrow ? (
-                <IconButton size="small" sx={{ p: 0, color: '#ef4444' }}>
-                  <ArrowUpwardIcon fontSize="small" />
-                </IconButton>
-              ) : null}
-            </Box>
-          </ConversationItem>
-        ))}
+              <ListItemText
+                primary={
+                  isLoading ? (
+                    <Skeleton animation="wave" width={80} />
+                  ) : (
+                    <Typography
+                      variant="subtitle1"
+                      component="div"
+                      sx={{ fontWeight: '600', fontSize: '16px', color: '#09090B', mb: '-2px' }}
+                    >
+                      {conversationName}
+                    </Typography>
+                  )
+                }
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '3px' }}>
+                    {isLoading ? (
+                      <Skeleton animation="wave" width={50} sx={{ marginRight: '10px' }} />
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          mr: 1,
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          borderRadius: '20px',
+                          padding: '0px 7px',
+                          height: '1.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          ...getPlatformStyles(conversation.platform)
+                        }}
+                      >
+                        {conversation.platform}
+                      </Typography>
+                    )}
+
+                    {!isLoading && conversation.hasDocument && <DescriptionIcon sx={{ fontSize: 16, mr: 0.5, color: '#6b7280' }} />}
+                    <Typography
+                      variant="body2"
+                      // color="text.secondary"
+                      color="#4b5563"
+                      fontSize={'.875rem'}
+                      sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: '200px'
+                      }}
+                    >
+                      {isLoading ? <Skeleton animation="wave" width={70} padding={2} /> : conversation.last_message}
+                    </Typography>
+                  </Box>
+                }
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'left',
+                  mr: 1,
+                  minWidth: 45,
+                  fontSize: '12px',
+                  marginBottom: '16px'
+                }}
+              >
+                <Typography variant="caption" color="text.secondary">
+                  {!isLoading && timeAgo(conversation.last_message_updated_at)}
+                </Typography>
+
+                {!isLoading && conversation.unread > 0 && <StyledBadge badgeContent={conversation.unread} />}
+              </Box>
+            </ConversationItem>
+          );
+        })}
       </List>
     </Paper>
   );

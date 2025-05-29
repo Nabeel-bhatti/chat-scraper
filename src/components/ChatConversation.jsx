@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mockChatData, mockTeamData } from './mockData';
 import {
   Avatar,
@@ -45,6 +45,15 @@ import Popover from '@mui/material/Popover';
 import { ProfileCard } from './ui/ProfileCard.jsx';
 import { DeleteIcon } from 'lucide-react';
 import ContributorsDialog from './ui/ContributorsDialog.jsx';
+import { useRef } from 'react';
+import axios from 'axios';
+import echo from '../../echo.js';
+import { api } from '../lib/apiRoute';
+import { Skeleton } from '@mui/material';
+import ChatEmptyState from './ui/chat-empty-state.jsx';
+import { markAsRead } from '../services/AllServices.jsx';
+
+const currentUserId = localStorage.getItem('user_id');
 
 // Styled components
 const ChatContainer = styled(Box)(({ theme }) => ({
@@ -139,8 +148,8 @@ const InternalNoteChip = styled(Chip)(({ theme }) => ({
 
 // Helper function for avatar styles
 const getAvatarStyles = (message) => {
-  if (message.isCurrentUser) return { bgcolor: '#2463EB', color: 'white' };
-  switch (message.sender) {
+  if (message.sender_id == currentUserId) return { bgcolor: '#2463EB', color: 'white' };
+  switch (message.sender.name) {
     case 'AI Assistant':
       return { bgcolor: '#3f51b5', color: 'white' };
     default:
@@ -157,12 +166,100 @@ const HoverAvatar = styled(Avatar)(({ theme }) => ({
 const Transition = (props) => <Slide direction="up" {...props} />;
 
 // Main component
-export default function ChatInterface() {
+export default function ChatInterface({ selectedChat }) {
   const [tabValue, setTabValue] = useState(0);
-  const [messages, setMessages] = useState(mockChatData);
+  const [messages, setMessages] = useState([]);
+  const [participant, setParticipant] = useState(null);
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [contributors, setContributors] = useState(mockTeamData);
+  const [isLoading, setIsLoading] = useState(true);
+  const bottomRef = useRef(null);
+  useEffect(() => {
+    if (selectedChat) {
+      fetchConversationData();
+    } else {
+      setMessages([]);
+      setParticipant(null);
+      setIsLoading(false);
+    }
+  }, [selectedChat]);
+
+  const fetchConversationData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get(`conversations/${selectedChat}`);
+      const data = response.data.data;
+      setParticipant(data.participant);
+      setMessages(data.messages);
+    } catch (error) {
+      console.error('Error fetching conversation:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const channel = echo.private(`chat.${selectedChat}`);
+
+    const handleNewMessage = async (event) => {
+      const incomingMessage = {
+        id: event.id,
+        conversation_id: event.conversation_id,
+        sender_id: event.sender_id,
+        message: event.message,
+        message_type: event.message_type,
+        created_at: event.created_at,
+        updated_at: event.updated_at,
+        is_read: event.is_read,
+        sender: {
+          id: event.sender?.id,
+          name: event.sender?.name,
+          email: event.sender?.email
+        }
+      };
+
+      setMessages((prev) => [...prev, incomingMessage]);
+
+      // Mark as read if current user is viewing the chat
+      if (event.sender_id !== currentUserId && document.hasFocus()) {
+        try {
+          await markAsRead(selectedChat);
+        } catch (error) {
+          console.error('Error marking as read:', error);
+        }
+      }
+    };
+
+    channel.listen('MessageSent', handleNewMessage);
+
+    return () => {
+      channel.stopListening('MessageSent', handleNewMessage);
+      echo.leave(`chat.${selectedChat}`);
+    };
+  }, [selectedChat]);
+
+  // Document focus listener
+  useEffect(() => {
+    const handleFocus = async () => {
+      if (selectedChat) {
+        try {
+          await markAsRead(selectedChat);
+        } catch (error) {
+          console.error('Error marking as read:', error);
+        }
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [selectedChat]);
 
   const handleAvatarClick = () => {
     setIsDialogOpen(true);
@@ -174,106 +271,105 @@ export default function ChatInterface() {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+  const sendMessageToBackend = async (message, files) => {
+    if (!selectedChat) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('message', message);
+      formData.append('receiver_id', participant.id);
+
+      if (files && files.length > 0) {
+        files.forEach((file) => {
+          formData.append('attachments[]', file);
+        });
+      }
+
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:8000/api/send-message', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      const result = response.data.data;
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
   const handleSidePanelOpen = () => {
     setIsSidePanelOpen(!isSidePanelOpen);
   };
-  // This function handles the sending of messages to the backend
-  const sendMessageToBackend = async (message, files) => {
-    const formData = new FormData();
-    formData.append('message', message);
-    console.log('Form Data:', message);
-    // // Append files if any
-    // if (files && files.length > 0) {
-    //   files.forEach((file) => {
-    //     formData.append('attachments', file);
-    //   });
-    // }
-    // try {
-    //   const response = await fetch('/api/messages', {
-    //     method: 'POST',
-    //     body: formData
-    //     // headers: { 'Content-Type': 'multipart/form-data' } // Don't set manually for FormData
-    //   });
-
-    //   if (!response.ok) throw new Error('Failed to send message');
-
-    //   const result = await response.json();
-
-    //   // Update your UI state with the new message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: random(1000, 9999),
-        sender: 'Sarah Miller',
-        initials: 'SM',
-        content: message,
-        isCurrentUser: true,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase(),
-        files: files.map((file) => ({
-          id: Math.random().toString(36).substring(2),
-          name: file.name,
-          size: `${(file.size / 1024).toFixed(1)} KB`
-        }))
-      }
-    ]);
-    // } catch (error) {
-    //   console.error('Error sending message:', error);
-    //   // Handle error (show error message to user, etc.)
-    // }
+  function formatTime(isoString) {
+    return new Date(isoString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+  const getInitials = (name) => {
+    if (!name) return '';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
   };
+  if (!selectedChat) {
+    return (
+      // <Box
+      //   sx={{
+      //     display: 'flex',
+      //     alignItems: 'center',
+      //     justifyContent: 'center',
+      //     height: '100%',
+      //     backgroundColor: '#F9FAFB'
+      //   }}
+      // >
+      <div style={{ height: '100vh', display: 'flex' }}>
+        <div style={{ flex: 1, padding: '16px' }}>
+          <ChatEmptyState />
+        </div>
+      </div>
+      // </Box>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Skeleton variant="rectangular" width="100%" height={60} sx={{ mb: 2, borderRadius: '9px' }} />
+        {[...Array(5)].map((_, i) => (
+          <Box key={i} sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: i % 2 === 0 ? 'flex-start' : 'flex-end' }}>
+              <Skeleton variant="circular" width={40} height={40} sx={{ mr: 1 }} />
+              <Skeleton variant="rectangular" width="60%" height={60} sx={{ borderRadius: '9px' }} />
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    );
+  }
   return (
     <ChatContainer>
       <ChatThread>
         <ChatHeader>
-          <Avatar sx={{ bgcolor: '#E5E7EB', color: '#666', mr: 2, fontWeight: 600, fontSize: '18px' }}>SM</Avatar>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              fontWeight="medium"
-              sx={{ fontSize: '16px', fontWeight: '600', color: '#09090B', lineHeight: '27px' }}
-            >
-              Sarah Miller
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  mr: 1,
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: '#09090B',
-                  border: '1px solid #D3D3D3',
-                  borderRadius: '20px',
-                  padding: '0px 8px'
-                }}
-              >
-                Upwork
-              </Typography>
-              {/* <Divider orientation="vertical" flexItem sx={{ mx: 1, height: 16 }} /> */}
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{
-                  mr: 1,
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: '#09090B',
-                  border: '1px solid #D3D3D3',
-                  borderRadius: '20px',
-                  padding: '0px 8px'
-                }}
-              >
-                Web Design
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <StatusDot />
-                <Typography variant="body2" color="text.secondary">
-                  Active now
+          {participant && (
+            <>
+              <Avatar sx={{ bgcolor: '#E5E7EB', color: '#666', mr: 2, fontWeight: 600, fontSize: '18px' }}>
+                {getInitials(participant.name)}
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle1" fontWeight="medium" sx={{ fontSize: '16px', fontWeight: '600', color: '#09090B' }}>
+                  {participant.name}
                 </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <StatusDot />
+                  <Typography variant="body2" color="text.secondary">
+                    {participant.last_seen_at ? `Last seen ${new Date(participant.last_seen_at).toLocaleTimeString()}` : 'Active now'}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          </Box>
+            </>
+          )}
           <Box sx={{ ml: 'auto', display: 'flex' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <AvatarGroup
@@ -288,18 +384,18 @@ export default function ChatInterface() {
                   }
                 }}
               >
-                {mockTeamData.map((member) => (
+                {contributors.map((member) => (
                   <HoverAvatar
                     key={member.id}
                     alt={member.name}
-                    src={member.imageUrl}
+                    src={member.imageUrl ? member.imageUrl : ''}
                     onClick={handleAvatarClick}
                     sx={{
-                      bgcolor: member.isCurrentUser ? '#2463EB' : '#E5E7EB',
-                      color: member.isCurrentUser ? 'white' : '#666'
+                      bgcolor: member.id == currentUserId ? '#2463EB' : '#E5E7EB',
+                      color: member.id == currentUserId ? 'white' : '#666'
                     }}
                   >
-                    {member.initials}
+                    {member.initials ? member.initials : getInitials(member.name)}
                   </HoverAvatar>
                 ))}
               </AvatarGroup>
@@ -312,9 +408,10 @@ export default function ChatInterface() {
             </IconButton>
           </Box>
         </ChatHeader>
+        {/* <NotificationComponent/> */}
         <MessageList>
           {messages.map((message) => {
-            const isMe = message.isCurrentUser;
+            const isMe = message.sender_id == currentUserId;
             return (
               <Box
                 key={message.id}
@@ -338,7 +435,7 @@ export default function ChatInterface() {
                       fontWeight: '700'
                     }}
                   >
-                    {message.initials}
+                    {message.initials ? message.initials : getInitials(message.sender.name)}
                   </Avatar>
                 )}
 
@@ -353,8 +450,8 @@ export default function ChatInterface() {
                 >
                   {!isMe && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                      <Typography variant="subtitle2">{message.sender}</Typography>
-                      {message.note && <InternalNoteChip label={message.note} size="small" />}
+                      <Typography variant="subtitle2">{message.sender.name}</Typography>
+                      {/* {message.note && <InternalNoteChip label={message.note} size="small" />} */}
                     </Box>
                   )}
 
@@ -384,7 +481,7 @@ export default function ChatInterface() {
                         fontFamily: 'inherit'
                       }}
                     >
-                      {message.content}
+                      {message.message}
                     </Typography>
                   </MessageBubble>
 
@@ -409,7 +506,7 @@ export default function ChatInterface() {
                     color="text.secondary"
                     sx={{ mt: -0.8, color: '#6b7280', fontSize: '0.75rem', lineHeight: '1rem', fontWeight: 500 }}
                   >
-                    {message.timestamp}
+                    {formatTime(message.updated_at)}
                   </Typography>
                 </Box>
 
@@ -426,12 +523,13 @@ export default function ChatInterface() {
                       fontWeight: '700'
                     }}
                   >
-                    {message.initials}
+                    {message.initials ? message.initials : getInitials(message.sender.name)}
                   </Avatar>
                 )}
               </Box>
             );
           })}
+          <div ref={bottomRef} />
         </MessageList>
 
         <MessageInputContainer>

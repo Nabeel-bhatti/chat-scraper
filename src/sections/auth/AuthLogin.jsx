@@ -18,7 +18,9 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import { GoogleLogin } from '@react-oauth/google';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-import { login } from '../../services/AllServices';
+
+import { googleAuth, login } from '../../services/AllServices';
+import { Box } from '@mui/material';
 
 export default function AuthLogin() {
   const [checked, setChecked] = React.useState(false);
@@ -48,8 +50,6 @@ export default function AuthLogin() {
   const handleLogin = async (values, { setSubmitting, setErrors, setStatus }) => {
     try {
       const response = await login(values);
-      console.log('Login response:', response.data.token);
-
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem('user_id', response.data.user.id);
@@ -190,20 +190,22 @@ export default function AuthLogin() {
 
                 <Grid size={12} mb={2}>
                   <AnimateButton>
-                    <GoogleLogin
-                      onSuccess={(credentialResponse) => {
-                        handleGoogleAuth(credentialResponse.credential);
-                      }}
-                      onError={() => {
-                        console.log('Login Failed');
-                      }}
-                      useOneTap
-                      text="continue_with"
-                      shape="rectangular"
-                      size="large"
-                      width="100%"
-                      mt={5}
-                    />
+                    <Box sx={{ width: '100%' }}>
+                      <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                          handleGoogleAuth(credentialResponse.credential);
+                        }}
+                        onError={(error) => {
+                          console.error('Google One Tap login failed:', error);
+                        }}
+                        useOneTap
+                        text="continue_with"
+                        shape="rectangular"
+                        size="large"
+                        width="400"
+                        // mt={5}
+                      />
+                    </Box>
                   </AnimateButton>
                 </Grid>
               </Grid>
