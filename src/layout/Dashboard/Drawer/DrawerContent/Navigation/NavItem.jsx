@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import IconButton from 'components/@extended/IconButton';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { Tooltip } from '@mui/material';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 
@@ -39,12 +40,15 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
 
   const Icon = item.icon;
   const itemIcon = item.icon ? (
-    <Icon
-      style={{
-        fontSize: drawerOpen ? '1rem' : '1.25rem',
-        ...(isParents && { fontSize: 20, stroke: '1.5' })
-      }}
-    />
+    <Tooltip title={item.title} placement="right" arrow>
+
+      <Icon
+        style={{
+          fontSize: drawerOpen ? '1rem' : '1.25rem',
+          ...(isParents && { fontSize: 20, stroke: '1.5' })
+        }}
+      />
+    </Tooltip>
   ) : (
     false
   );
@@ -101,10 +105,10 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
                 }),
                 ...(!drawerOpen &&
                   isSelected && {
-                    bgcolor: 'primary.lighter',
-                    ...theme.applyStyles('dark', { bgcolor: 'primary.900' }),
-                    '&:hover': { bgcolor: 'primary.lighter', ...theme.applyStyles('dark', { bgcolor: 'primary.darker' }) }
-                  })
+                  bgcolor: 'primary.lighter',
+                  ...theme.applyStyles('dark', { bgcolor: 'primary.900' }),
+                  '&:hover': { bgcolor: 'primary.lighter', ...theme.applyStyles('dark', { bgcolor: 'primary.darker' }) }
+                })
               })}
             >
               {itemIcon}

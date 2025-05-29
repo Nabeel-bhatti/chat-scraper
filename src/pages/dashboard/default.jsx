@@ -2,24 +2,30 @@ import * as React from 'react';
 import {
   ArrowRightOutlined,
   BarChartOutlined,
-  BellOutlined,
+  // BellOutlined,
   CalendarOutlined,
   CheckCircleOutlined,
   FieldTimeOutlined,
   FileTextOutlined,
+  MessageOutlined,
+  MoreOutlined,
   RiseOutlined,
   UserOutlined,
-  WechatWorkOutlined
+  WechatWorkOutlined,
 } from '@ant-design/icons';
-import { Box, Button, Card, IconButton, Stack, styled } from '@mui/material';
+import { Avatar, Box, Button, Card, IconButton, Stack, styled } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-// import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { appChat, schedule } from '../../data/dummy_team_data';
+import { fontSize } from '@mui/system';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 export default function DashboardDefault() {
+  const userName = localStorage.getItem('user_name');
+  const navigate = useNavigate();
   const ColoredLinearProgress = ({
     value,
     color = '#22C55E',
@@ -47,6 +53,7 @@ export default function DashboardDefault() {
   );
 
   const C = styled(Card)({
+    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
     display: 'flex',
     justifyContent: 'space-between',
     padding: '15px',
@@ -54,6 +61,15 @@ export default function DashboardDefault() {
     borderRadius: '7px'
   });
   const C2 = styled(Card)({
+    height: '100%',
+    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    padding: '15px',
+    borderColor: '#e4e4e7',
+    borderRadius: '7px'
+  });
+  const C3 = styled(Card)({
+    display: 'flex',
+    justifyContent: 'space-between',
     padding: '15px',
     borderColor: '#e4e4e7',
     borderRadius: '7px'
@@ -65,9 +81,9 @@ export default function DashboardDefault() {
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      <Stack size={12} bgcolor={'#2463EB'} color={'#fff'} sx={{ padding: '1.5rem' }} borderRadius={2}>
+      <Stack size={12} bgcolor={'#2463EB'} color={'#fff'} sx={{ padding: '1.5rem', boxShadow: "0 4px 6px -1px rgb(36 99 235 / 0.1), 0 2px 4px -2px rgb(36 99 235 / 0.1)", }} borderRadius={2}>
         <Typography variant="h3" sx={{ fontSize: '24px', fontWeight: '700' }}>
-          Welcome back, Umar!
+          Welcome back, {userName}!
         </Typography>
         <Typography sx={{ fontSize: '16px', mb: '12px' }}>You have 5 unread messages and 3 tasks requiring attention today.</Typography>
         <Stack direction="row" spacing={2}>
@@ -192,6 +208,89 @@ export default function DashboardDefault() {
 
       <MainG container spacing={2}>
         <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+          <C2 variant="outlined">
+            <Box>
+              <Box sx={{ mb: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <IconButton
+                    sx={{
+                      color: '#000', borderRadius: '50px', bgcolor: '#fff', boxShadow: '0px 3px 14px rgba(0,0,0,0.08)', p: '6px', pl: '10px', pr: '10px', mr: '16px', textAlign: 'center ', cursor: 'default', "&:hover": { color: '#000', bgcolor: '#fff', }
+                    }}
+                  >
+                    <MessageOutlined style={{ fontSize: "1.5rem" }} />
+                  </IconButton>
+
+                  <Typography sx={{ fontSize: '24px', fontWeight: 600 }}>App chat</Typography>
+                </Box>
+                <IconButton
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#000',
+                    '&:hover': {
+                      color: '#2463EB',
+                    }
+                  }}
+                >
+
+                  <MoreOutlined style={{
+
+                    rotate: "90deg",
+                    fontSize: "24px",
+                  }} />
+                </IconButton>
+              </Box>
+              <Box>
+                {
+                  appChat.map((user) => (
+                    <Box onClick={() => navigate('/messages')} sx={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: '8px 8px', borderRadius: "8px", cursor: "pointer", "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.04)"
+                      },
+                    }}>
+
+                      <Box sx={{ display: 'flex', columnGap: '12px', alignItems: 'center' }}>
+                        <Box sx={{ textAlign: 'center ' }}>
+                          <Avatar alt="profile user" src={user.image} size="sm" />
+                        </Box>
+                        <Box>
+                          <Typography sx={{ fontSize: '14px', fontWeight: 500, color: "#212636" }}>{user.name}</Typography>
+                          <Typography sx={{ fontSize: '14px', color: '#667085' }}>{user.message}</Typography>
+                        </Box>
+                      </Box>
+                      <Typography sx={{ fontSize: '12px', color: '#667085' }}>{user.time}</Typography>
+                    </Box>
+
+                  ))
+                }
+
+              </Box>
+              <hr style={{
+                color: "#dcdfe4", border: "solid", borderWidth: "0px 0px thin", marginTop: "8px", marginLeft: "-16px",
+                marginRight: "-16px"
+              }} />
+              <Button
+                onClick={() => navigate('/messages')}
+                endIcon={<ArrowRightOutlined />}
+                sx={{
+                  mt: 2,
+                  borderRadius: "8px",
+                  backgroundColor: '#fff',
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000',
+                  '&:hover': {
+                    color: '#2463EB'
+                  }
+                }}
+              >
+                Go to chat
+              </Button>
+            </Box>
+          </C2>
+        </Grid>
+        {/* <Grid size={{ xs: 12, md: 6, lg: 6 }}>
           <C2 variant="outlined" sx={{ height: '100%' }}>
             <Box>
               <Box sx={{ mb: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -277,7 +376,7 @@ export default function DashboardDefault() {
               View All Activity
             </Button>
           </C2>
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, md: 6, lg: 6 }}>
           <C2 variant="outlined">
             <Box>
@@ -285,7 +384,7 @@ export default function DashboardDefault() {
                 <Typography sx={{ fontSize: '24px', fontWeight: 600 }}>Upcoming Schedule</Typography>
                 <IconButton
                   sx={{
-                    fontSize: '14px',
+                    fontSize: '18px',
                     fontWeight: 500,
                     color: '#000',
                     '&:hover': {
@@ -296,72 +395,30 @@ export default function DashboardDefault() {
                   <CalendarOutlined />
                 </IconButton>
               </Box>
-              <C variant="outlined" sx={{ p: '12px' }}>
-                <Box sx={{ display: 'flex', gap: '16px' }}>
-                  <Box>
-                    <Typography sx={{ fontSize: '18px', fontWeight: 700 }}>Today</Typography>
-                    <Typography sx={{ fontSize: '12px' }}>2:00 PM</Typography>
+              {schedule.map((data) => (
+
+                <C3 variant="outlined" sx={{ p: '9.6px', mt: '12px' }}>
+                  <Box sx={{ display: 'flex', gap: '16px' }}>
+                    <Box>
+                      <Typography sx={{ fontSize: '18px', fontWeight: 700 }}>{data.day}</Typography>
+                      <Typography sx={{ fontSize: '12px' }}>{data.time}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>{data.title}</Typography>
+                      <Typography sx={{ fontSize: '14px', color: '#6b7280' }}>{data.client}</Typography>
+                    </Box>
                   </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Client Discovery Call</Typography>
-                    <Typography sx={{ fontSize: '14px', color: '#6b7280' }}>Acme Corp</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'end' }}>
+                    <Typography sx={{ color: '#6b7280', fontSize: '12px' }}>{data.duration}</Typography>
                   </Box>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'end' }}>
-                  <Typography sx={{ color: '#6b7280', fontSize: '12px' }}>30 min</Typography>
-                </Box>
-              </C>
-              <C variant="outlined" sx={{ p: '12px', mt: '12px' }}>
-                <Box sx={{ display: 'flex', gap: '16px' }}>
-                  <Box>
-                    <Typography sx={{ fontSize: '18px', fontWeight: 700 }}>Today</Typography>
-                    <Typography sx={{ fontSize: '12px' }}>4:30 PM</Typography>
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Design Review Meeting</Typography>
-                    <Typography sx={{ fontSize: '14px', color: '#6b7280' }}>TechStart Inc</Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'end' }}>
-                  <Typography sx={{ color: '#6b7280', fontSize: '12px' }}>1 hour</Typography>
-                </Box>
-              </C>
-              <C variant="outlined" sx={{ p: '12px', mt: '12px' }}>
-                <Box sx={{ display: 'flex', gap: '16px' }}>
-                  <Box>
-                    <Typography sx={{ fontSize: '18px', fontWeight: 700 }}>Tomorrow</Typography>
-                    <Typography sx={{ fontSize: '12px' }}>10:00 AM</Typography>
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Weekly Team Sync</Typography>
-                    <Typography sx={{ fontSize: '14px', color: '#6b7280' }}>Internal</Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'end' }}>
-                  <Typography sx={{ color: '#6b7280', fontSize: '12px' }}>45 min</Typography>
-                </Box>
-              </C>
-              <C variant="outlined" sx={{ p: '12px', mt: '12px' }}>
-                <Box sx={{ display: 'flex', gap: '16px' }}>
-                  <Box>
-                    <Typography sx={{ fontSize: '18px', fontWeight: 700 }}>Oct 24</Typography>
-                    <Typography sx={{ fontSize: '12px' }}>12:00 PM</Typography>
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Project Delivery</Typography>
-                    <Typography sx={{ fontSize: '14px', color: '#6b7280' }}>Global Solutions</Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'end' }}>
-                  <Typography sx={{ color: '#6b7280', fontSize: '12px' }}>Deadline</Typography>
-                </Box>
-              </C>
+                </C3>
+              ))}
             </Box>
             <Button
               sx={{
                 fontSize: '14px',
                 fontWeight: 500,
-                mt: 4,
+                mt: 2,
                 color: '#000',
                 '&:hover': {
                   color: '#2463EB'
@@ -508,6 +565,6 @@ export default function DashboardDefault() {
           View Detailed Analytics
         </Button>
       </C2>
-    </Box>
+    </Box >
   );
 }

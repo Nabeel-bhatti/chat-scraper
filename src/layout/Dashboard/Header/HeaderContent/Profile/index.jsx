@@ -29,6 +29,8 @@ import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
+import { useNavigate } from 'react-router-dom';
+
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -56,6 +58,9 @@ export default function Profile() {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+  const navigate = useNavigate();
+  const userName = localStorage.getItem("user_name");
+  const userEmail = localStorage.getItem("user_email");
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -90,7 +95,7 @@ export default function Profile() {
         <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center', p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            John Doe
+            {userName}
           </Typography>
         </Stack>
       </ButtonBase>
@@ -123,16 +128,19 @@ export default function Profile() {
                         <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{userName}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              {userEmail}
                             </Typography>
                           </Stack>
                         </Stack>
                       </Grid>
                       <Grid>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
+                          <IconButton size="large" sx={{ color: 'text.primary' }} onClick={() => {
+                            localStorage.clear();
+                            navigate("/login");
+                          }}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>

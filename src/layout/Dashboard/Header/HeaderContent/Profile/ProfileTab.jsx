@@ -47,7 +47,11 @@ export default function ProfileTab() {
         </ListItemIcon>
         <ListItemText primary="Billing" />
       </ListItemButton>
-      <ListItemButton>
+      <ListItemButton onClick={() => {
+        localStorage.clear();
+        navigate("/login");
+
+      }}>
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>

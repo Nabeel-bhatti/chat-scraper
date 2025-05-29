@@ -1,8 +1,20 @@
 
-import { Box, Button, Card, InputLabel, OutlinedInput, Paper, Stack, styled, Typography } from '@mui/material';
+import {
+    Box, Button, Card, InputLabel, OutlinedInput, Paper, styled, Typography,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    IconButton,
+    FormControl,
+    FormLabel,
+    TextField,
+    Stack,
+    Autocomplete,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { dummyUser, integrations } from '../../data/dummy_team_data';
-import { CalendarOutlined, ClockCircleOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
@@ -10,6 +22,10 @@ import { DataGrid } from '@mui/x-data-grid';
 
 export default function profile() {
 
+    const userName = localStorage.getItem("user_name") || "";
+    const userEmail = localStorage.getItem("user_email") || "";
+    console.log("userName", userName);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
@@ -25,11 +41,21 @@ export default function profile() {
             }))
         );
     }, []);
+    const Lable = styled(FormLabel)({
+        marginBottom: '3px',
+        color: '#09090b',
+        fontSize: '14px',
+        fontWeight: 500
+    });
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
 
 
 
     const getInitials = (name) => {
-        const words = name.trim().split(' ');
+        if (!name) return "";
+        const words = name.trim().split(/\s+/);
         if (words.length === 1) return words[0][0].toUpperCase();
         return (words[0][0] + words[1][0]).toUpperCase();
     };
@@ -86,7 +112,7 @@ export default function profile() {
         <Box sx={{ p: { xs: 2, sm: 3 } }}>
 
             {dummyUser.map((user) => {
-                const initials = getInitials(user.name);
+                const initials = getInitials(userName);
                 return (
                     <>
 
@@ -101,12 +127,12 @@ export default function profile() {
                                 <Box>
                                     <Box>
                                         <Typography sx={{ fontSize: "30px", fontWeight: 700, color: "#09090B" }}>
-                                            {user.name}
+                                            {userName}
                                         </Typography>
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: '1rem', mt: "4px" }}>
                                         <Typography sx={{ fontSize: "16px", color: "#4b5563" }}><span style={{ marginRight: "4px" }}> <UserOutlined /></span>{user.role}</Typography>
-                                        <Typography sx={{ fontSize: "16px", color: "#4b5563" }}><span style={{ marginRight: "4px" }}> <MailOutlined /></span>{user.email}</Typography>
+                                        <Typography sx={{ fontSize: "16px", color: "#4b5563" }}><span style={{ marginRight: "4px" }}> <MailOutlined /></span>{userEmail}</Typography>
                                         <Typography sx={{ fontSize: "16px", color: "#4b5563" }}><span style={{ marginRight: "4px" }}> <ClockCircleOutlined /></span>{user.timeZone}</Typography>
                                     </Box>
                                 </Box>
@@ -175,7 +201,7 @@ export default function profile() {
                                                 sx={{ bgcolor: "#fff" }}
                                                 id="name"
                                                 name="name"
-                                                value={user.name}
+                                                value={userName}
                                                 placeholder="Enter email address"
                                                 fullWidth
                                             />
@@ -186,7 +212,7 @@ export default function profile() {
                                                 sx={{ bgcolor: "#fff" }}
                                                 id="email"
                                                 name="email"
-                                                value={user.email}
+                                                value={userEmail}
                                                 fullWidth
                                             />
                                         </Grid>
@@ -269,8 +295,112 @@ export default function profile() {
                                         }
                                     }}
                                 />
+                                <Dialog
+                                    open={dialogOpen}
+                                    onClose={handleDialogClose}
+                                    minWidth={'50vw'}
+                                    slotProps={{
+                                        backdrop: {
+                                            sx: {
+                                                backgroundColor: 'rgba(0, 0, 0, 0.8)'
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <DialogTitle
+                                        component={'h4'}
+                                        sx={{
+                                            paddingBottom: '0px',
+                                            color: '#09090b',
+                                            fontSize: '18px',
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        Add Integration
+                                    </DialogTitle>
+                                    <IconButton
+                                        aria-label="close"
+                                        onClick={() => setDialogOpen(false)}
+                                        sx={(theme) => ({
+                                            position: 'absolute',
+                                            right: 8,
+                                            top: 8,
+                                            cursor: 'default',
+                                            color: theme.palette.grey[500],
+                                            '&:hover': {
+                                                backgroundColor: '#fff'
+                                            }
+                                        })}
+                                    >
+                                        <CloseOutlined
+                                            sx={{
+                                                height: '16px',
+                                                cursor: 'pointer',
+                                                width: '16px',
+                                                '&:hover': {
+                                                    color: '#09090b',
+                                                    backgroundColor: '#fff'
+                                                }
+                                            }}
+                                        />
+                                    </IconButton>
+                                    <DialogContent >
+
+                                        <FormControl sx={{ width: '25vw' }}>
+                                            <Lable>PlatForm *</Lable>
+                                            <Stack>
+                                                <Autocomplete
+                                                    sx={{
+                                                        mb: 3,
+                                                        '& .MuiOutlinedInput-root': {
+                                                            borderRadius: '.4rem'
+                                                        }
+                                                    }}
+                                                    options={['Upwork', 'Fiverr', 'Slack']}
+                                                    renderInput={(params) => <TextField placeholder="Select a platform" {...params} size="small" variant="outlined" />}
+                                                />
+                                            </Stack>
+                                        </FormControl>
+
+                                    </DialogContent>
+
+                                    <DialogActions sx={{ pb: '24px', pr: '22px' }}>
+                                        <Button
+                                            onClick={() => setDialogOpen(false)}
+                                            color="primary"
+                                            sx={{
+                                                backgroundColor: '#fff',
+                                                color: '#09090b',
+                                                border: ' 1px solid #e4e4e7',
+                                                fontSize: '14px',
+                                                fontWeight: 500,
+                                                borderRadius: '6px',
+                                                px: '18px',
+                                                '&:hover': { color: '#2463EB', backgroundColor: '#ecf2fd' }
+                                            }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={() => setDialogOpen(false)}
+                                            color="primary"
+                                            sx={{
+                                                backgroundColor: '#2463EB',
+                                                color: '#fff',
+                                                fontSize: '14px',
+                                                fontWeight: 500,
+                                                borderRadius: '6px',
+                                                px: '18px',
+                                                '&:hover': { color: '#fff', backgroundColor: '#2463ebe6' }
+                                            }}
+                                        >
+                                            Save
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
 
                                 <Button
+                                    onClick={() => setDialogOpen(true)}
                                     sx={{
                                         position: "absolute",
                                         left: "24px",
@@ -294,7 +424,7 @@ export default function profile() {
                                 </Button>
 
                             </Paper>
-                        </Box>
+                        </Box >
                         <Grid container size={12} >
                             <C variant="outlined" >
 
@@ -308,7 +438,7 @@ export default function profile() {
                                     <Grid size={{ xs: 12, md: 6, lg: 6 }} sx={{ display: 'flex', justifyContent: 'space-between', px: "12px" }}>
                                         {/* <Box sx={{ display: 'flex', gap: ".5rem" }}><KeyOutlined style={{ color: "#4b5563", fontSize: "20px", rotate: "180deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
                                         </Box> */}
-                                        <Box sx={{display:"flex",alignItems:'center', gap: ".5rem" }}><VpnKeyOutlinedIcon style={{ color: "#4b5563", fontSize: "20px", rotate: "-45deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
+                                        <Box sx={{ display: "flex", alignItems: 'center', gap: ".5rem" }}><VpnKeyOutlinedIcon style={{ color: "#4b5563", fontSize: "20px", rotate: "-45deg" }} /><Typography sx={{ fontSize: "16px" }}>Two-Factor Authentication</Typography>
                                         </Box>
                                         <Box>
                                             <Button

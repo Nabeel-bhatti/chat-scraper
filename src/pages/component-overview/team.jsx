@@ -132,10 +132,14 @@ const team = () => {
     }
   ];
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+    <Box sx={{
+      p: { xs: 2, sm: 3, },
+
+    }}>
       <Paper
         variant="outlined"
         sx={{
+          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
           borderColor: '#e4e4e7',
           borderRadius: '7px',
           p: 2

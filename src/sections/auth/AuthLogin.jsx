@@ -36,6 +36,9 @@ export default function AuthLogin() {
     try {
       const response = await googleAuth(credential);
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user_id', response.data.user.id);
+      localStorage.setItem('user_email', response.data.user.email);
+      localStorage.setItem('user_name', response.data.user.name);
       navigate('/dashboard/default', { replace: true });
     } catch (error) {
       console.error('Google authentication failed:', error);
@@ -49,6 +52,9 @@ export default function AuthLogin() {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem('user_id', response.data.user.id);
+        localStorage.setItem('user_email', response.data.user.email);
+        localStorage.setItem('user_name', response.data.user.name);
         console.log('Login successful!');
         navigate('/');
       }
